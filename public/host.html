@@ -86,14 +86,34 @@
         </div>
 
         <!-- Controls / Info -->
-        <div class="w-full mt-6 grid grid-cols-2 gap-4">
-            <div class="bg-ctp-mantle p-4 rounded border border-ctp-surface0">
-                <div class="text-xs text-ctp-overlay0 uppercase mb-1">Status</div>
-                <div id="statusText" class="text-ctp-yellow font-bold">IDLE</div>
-            </div>
-            <div class="bg-ctp-mantle p-4 rounded border border-ctp-surface0">
-                <div class="text-xs text-ctp-overlay0 uppercase mb-1">Now Playing ID</div>
-                <div id="currentId" class="text-ctp-blue font-mono text-sm truncate">---</div>
+        <div class="w-full mt-6 flex gap-4 items-stretch">
+            <!-- Status & Metadata Group -->
+            <div class="flex-1 bg-ctp-mantle rounded-xl border border-ctp-surface0 p-4 flex items-center justify-between shadow-lg">
+                <div class="flex flex-col border-r border-ctp-surface1 pr-6 mr-6 min-w-[120px]">
+                    <div class="text-[10px] text-ctp-overlay0 uppercase tracking-[0.2em] mb-1">Status</div>
+                    <div id="statusText" class="text-ctp-yellow font-bold text-sm">IDLE</div>
+                </div>
+                
+                <div class="flex-1 min-w-0">
+                    <div class="text-[10px] text-ctp-overlay0 uppercase tracking-[0.2em] mb-1">Now Playing</div>
+                    <div class="flex flex-col">
+                        <div id="currentInfo" class="text-ctp-blue font-bold text-sm truncate leading-tight">---</div>
+                        <div id="currentArtist" class="text-ctp-subtext0 text-[11px] truncate mt-0.5">---</div>
+                    </div>
+                </div>
+
+                <!-- Sleek Skip Button -->
+                <button onclick="skipSong()" 
+                    class="ml-6 group relative p-3 rounded-full bg-ctp-surface0 text-ctp-red hover:bg-ctp-red hover:text-ctp-base transition-all duration-300 shadow-lg hover:shadow-[0_0_15px_rgba(243,139,168,0.4)] active:scale-90"
+                    title="Skip Song">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M6 18L14.5 12L6 6V18ZM16 6V18H18V6H16Z" />
+                    </svg>
+                    <!-- Tooltip hint -->
+                    <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-ctp-surface1 text-ctp-text text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+                        SKIP TRACK
+                    </span>
+                </button>
             </div>
         </div>
     </div>
@@ -172,15 +192,33 @@
         // 5. Menerima perintah Play dari Server
         socket.on('play_next', (song) => {
             if(song && isReady) {
-                console.log("Memutar:", song.id);
-                document.getElementById('currentId').innerText = song.id;
+                console.log("Memutar:", song.title);
                 
+                // Update UI Info
+                document.getElementById('currentInfo').innerText = song.title;
+                document.getElementById('currentArtist').innerText = song.artist || "Unknown Artist";
+
                 // Pastikan player ada
                 if(player && player.loadVideoById) {
                     player.loadVideoById(song.id);
                 }
             }
         });
+        // 6. Fungsi Skip
+        function skipSong() {
+            if(isReady) {
+                console.log("Skipping song...");
+                setStatus("SKIPPING...", "text-ctp-red");
+                
+                // Stop player biar gak tumpang tindih suaranya pas loading next
+                if(player && player.stopVideo) {
+                    player.stopVideo();
+                }
+
+                // Paksa server kirim lagu berikutnya
+                socket.emit('song_ended');
+            }
+        }
     </script>
 </body>
 </html>
