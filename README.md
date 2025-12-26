@@ -12,6 +12,14 @@ Designed for shared spaces (like secretariats, offices, or parties) where one "H
 - **Host Dashboard:** Dedicated admin view with player controls (Play, Pause, Skip) and status monitoring.
 - **Auto-Play:** Automatically plays the next song in the queue when the current one ends.
 
+## 📸 Preview
+
+### Client Interface
+![Client Screenshot](screenshot-client.png)
+
+### Host Dashboard
+![Host Screenshot](screenshot-host.png)
+
 ## 🛠️ Prerequisites
 
 - **Node.js** (v14 or higher) installed on your system.
@@ -50,7 +58,7 @@ The server will start at `http://localhost:3000`.
 *   Open a browser on any device (phone, laptop) connected to the same Wi-Fi.
 *   Go to: `http://<YOUR_IP_ADDRESS>:3000` (e.g., `http://192.168.1.5:3000`) or `http://localhost:3000` if on the same machine.
 *   Paste a **YouTube Link** or type a **Song Title** in the search box.
-*   Click **"Kirim"** to add it to the queue.
+*   Click **"Submit"** to add it to the queue.
 
 ## 📁 Project Structure
 
