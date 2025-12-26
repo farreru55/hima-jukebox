@@ -1,9 +1,10 @@
 {
-  "name": "queue-web",
+  "name": "hima-jukebox",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A real-time collaborative music queue system for HIMA.",
+  "main": "server.js",
   "scripts": {
+    "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

@@ -20,8 +20,8 @@ Designed for shared spaces (like secretariats, offices, or parties) where one "H
 
 1.  **Clone the repository** (or download the source code):
     ```bash
-    git clone <repository_url>
-    cd queue-web
+    git clone https://github.com/farreru/hima-jukebox.git
+    cd hima-jukebox
     ```
 
 2.  **Install dependencies:**
