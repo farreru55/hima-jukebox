@@ -1,10 +1,26 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Request Lagu HIMA</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style> body { font-family: sans-serif; padding: 20px; } input { width: 70%; padding: 10px; } button { padding: 10px; } </style>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+        }
+
+        input {
+            width: 70%;
+            padding: 10px;
+        }
+
+        button {
+            padding: 10px;
+        }
+    </style>
 </head>
+
 <body>
     <h2>Request Lagu Sekretariat</h2>
     <input type="text" id="linkInput" placeholder="Paste Link YouTube di sini...">
@@ -22,7 +38,7 @@
 
         function requestLagu() {
             const input = document.getElementById('linkInput');
-            if(input.value) {
+            if (input.value) {
                 socket.emit('request_song', input.value);
                 input.value = ''; // Kosongkan input
             }
@@ -30,16 +46,21 @@
 
         // Dengerin update dari server
         socket.on('update_queue', (data) => {
-            document.getElementById('nowPlaying').innerText = data.currentSong ? data.currentSong.id : "Hening...";
-            
+            // Tampilkan Judul di Now Playing
+            document.getElementById('nowPlaying').innerText = data.currentSong ? data.currentSong.title : "Hening...";
+
             const list = document.getElementById('queueList');
-            list.innerHTML = ""; // Reset list
+            list.innerHTML = "";
+
+            // Tampilkan Judul di List Antrian
             data.playlist.forEach(song => {
                 const li = document.createElement('li');
-                li.innerText = song.id;
+                // Ganti song.id jadi song.title
+                li.innerText = song.title;
                 list.appendChild(li);
             });
         });
     </script>
 </body>
+
 </html>
