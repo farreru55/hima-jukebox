@@ -125,6 +125,11 @@ io.on('connection', (socket) => {
     });
 });
 
-server.listen(3000, () => {
-    console.log('Jukebox jalan di http://localhost:3000');
+// server.listen(3000, () => {
+//     console.log('Jukebox jalan di http://localhost:3000');
+// });
+
+const PORT = process.env.PORT || 3000; // Pakai Port dari Server, kalau ga ada baru pakai 3000
+server.listen(PORT, () => {
+    console.log(`Server jalan di port ${PORT}`);
 });
