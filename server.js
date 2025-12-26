@@ -2,7 +2,7 @@ const express = require('express');
 const http = require('http');
 const { Server } = require("socket.io");
 const axios = require('axios');
-const yts = require('yt-search'); // BARU: Library pencari
+const yts = require('yt-search'); // Search Library
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
@@ -12,7 +12,7 @@ app.use(express.static('public'));
 let playlist = []; 
 let currentSong = null;
 
-// Regex untuk cek apakah input adalah URL
+// Regex to check if input is URL
 function isUrl(string) {
     try {
         new URL(string);
@@ -22,14 +22,14 @@ function isUrl(string) {
     }
 }
 
-// Logic ambil ID dari Link (Cara Lama)
+// Logic to get ID from Link
 function getYouTubeID(url) {
     const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
     const match = url.match(regExp);
     return (match && match[7].length == 11) ? match[7] : false;
 }
 
-// Logic ambil metadata dari ID (Cara Lama)
+// Logic to get metadata from ID
 async function getYoutubeMetadata(videoId) {
     try {
         const url = `https://www.youtube.com/oembed?url=http://www.youtube.com/watch?v=${videoId}&format=json`;
@@ -39,18 +39,18 @@ async function getYoutubeMetadata(videoId) {
             artist: response.data.author_name
         };
     } catch (error) {
-        return { title: `Lagu ID: ${videoId}`, artist: 'Unknown' };
+        return { title: `Song ID: ${videoId}`, artist: 'Unknown' };
     }
 }
 
-// BARU: Logic Cari Lagu berdasarkan Judul
+// Logic: Search Song by Title
 async function searchSong(query) {
     try {
         const r = await yts(query);
         const videos = r.videos;
         
         if (videos.length > 0) {
-            // Ambil video urutan pertama
+            // Get first video result
             const topResult = videos[0];
             return {
                 id: topResult.videoId,
@@ -73,9 +73,9 @@ io.on('connection', (socket) => {
     socket.on('request_song', async (input) => {
         let songData = null;
 
-        // CEK: Apakah input User itu Link atau Tulisan Biasa?
+        // Check: Is input URL or Search Term?
         if (isUrl(input)) {
-            // --- JALUR LINK ---
+            // --- URL MODE ---
             const videoId = getYouTubeID(input);
             if (videoId) {
                 const metadata = await getYoutubeMetadata(videoId);
@@ -87,8 +87,8 @@ io.on('connection', (socket) => {
                 };
             }
         } else {
-            // --- JALUR PENCARIAN (Judul) ---
-            console.log(`Mencari: ${input}`);
+            // --- SEARCH MODE ---
+            console.log(`Searching: ${input}`);
             const result = await searchSong(input);
             if (result) {
                 songData = {
@@ -100,15 +100,15 @@ io.on('connection', (socket) => {
             }
         }
 
-        // PROSES MASUK ANTRIAN
+        // ADD TO QUEUE PROCESS
         if (songData) {
-            // Cek duplikat
+            // Check for duplicates
             const exists = playlist.some(s => s.id === songData.id) || (currentSong && currentSong.id === songData.id);
             
             if (!exists) {
                 playlist.push(songData);
                 io.emit('update_queue', { playlist, currentSong });
-                console.log(`Menambahkan: ${songData.title}`);
+                console.log(`Adding: ${songData.title}`);
             }
         }
     });
@@ -125,11 +125,7 @@ io.on('connection', (socket) => {
     });
 });
 
-// server.listen(3000, () => {
-//     console.log('Jukebox jalan di http://localhost:3000');
-// });
-
-const PORT = process.env.PORT || 3000; // Pakai Port dari Server, kalau ga ada baru pakai 3000
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-    console.log(`Server jalan di port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });

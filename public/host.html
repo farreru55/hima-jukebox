@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <title>HOST PLAYER (ADMIN)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -136,10 +136,10 @@
                 height: '100%',
                 width: '100%',
                 playerVars: {
-                    'controls': 1,      // Tampilkan kontrol
-                    'disablekb': 0,     // Izinkan keyboard
-                    'fs': 1,            // Izinkan fullscreen button
-                    'rel': 0            // Matikan related videos di akhir
+                    'controls': 1,      // Show controls
+                    'disablekb': 0,     // Enable keyboard
+                    'fs': 1,            // Enable fullscreen
+                    'rel': 0            // Disable related videos at end
                 },
                 events: {
                     'onStateChange': onPlayerStateChange,
@@ -152,11 +152,11 @@
             console.log("Player API Ready");
         }
 
-        // 3. Deteksi kalau lagu kelar
+        // 3. Detect when song ends
         function onPlayerStateChange(event) {
-            // State 0 artinya ENDED (Selesai)
+            // State 0 means ENDED
             if (event.data === 0) {
-                console.log("Lagu habis, minta server lagu berikutnya...");
+                console.log("Song ended, requesting next...");
                 setStatus("ENDING_TRACK", "text-ctp-red");
                 socket.emit('song_ended'); 
                 document.getElementById('idleState').style.display = 'flex';
@@ -168,10 +168,10 @@
             }
         }
 
-        // 4. Fungsi Start (Mengatasi Autoplay Policy)
+        // 4. Start Function (Autoplay Policy workaround)
         function startSystem() {
             isReady = true;
-            socket.emit('song_ended'); // Mancing server buat kirim lagu pertama
+            socket.emit('song_ended'); // Trigger server to send first song
             
             // UI Updates
             const overlay = document.getElementById('startOverlay');
@@ -189,33 +189,34 @@
             el.className = `font-bold ${colorClass}`;
         }
 
-        // 5. Menerima perintah Play dari Server
+        // 5. Receive Play command from Server
         socket.on('play_next', (song) => {
             if(song && isReady) {
-                console.log("Memutar:", song.title);
+                console.log("Playing:", song.title);
                 
                 // Update UI Info
                 document.getElementById('currentInfo').innerText = song.title;
                 document.getElementById('currentArtist').innerText = song.artist || "Unknown Artist";
 
-                // Pastikan player ada
+                // Ensure player exists
                 if(player && player.loadVideoById) {
                     player.loadVideoById(song.id);
                 }
             }
         });
-        // 6. Fungsi Skip
+
+        // 6. Skip Function
         function skipSong() {
             if(isReady) {
                 console.log("Skipping song...");
                 setStatus("SKIPPING...", "text-ctp-red");
                 
-                // Stop player biar gak tumpang tindih suaranya pas loading next
+                // Stop player to avoid audio overlap
                 if(player && player.stopVideo) {
                     player.stopVideo();
                 }
 
-                // Paksa server kirim lagu berikutnya
+                // Force server to send next song
                 socket.emit('song_ended');
             }
         }
