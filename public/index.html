@@ -46,17 +46,30 @@
 
         // Dengerin update dari server
         socket.on('update_queue', (data) => {
-            // Tampilkan Judul di Now Playing
-            document.getElementById('nowPlaying').innerText = data.currentSong ? data.currentSong.title : "Hening...";
+            // Update Now Playing
+            if (data.currentSong) {
+                // Tampilkan Judul di baris pertama, Artist di baris kedua (opsional) atau digabung
+                document.getElementById('nowPlaying').innerHTML = `
+            <strong>${data.currentSong.title}</strong><br>
+            <small>by ${data.currentSong.artist}</small>
+        `;
+            } else {
+                document.getElementById('nowPlaying').innerText = "Hening... Belum ada lagu.";
+            }
 
             const list = document.getElementById('queueList');
             list.innerHTML = "";
 
-            // Tampilkan Judul di List Antrian
+            // Update List Antrian
             data.playlist.forEach(song => {
                 const li = document.createElement('li');
-                // Ganti song.id jadi song.title
-                li.innerText = song.title;
+                // Format: Judul - Artist
+                li.innerHTML = `
+            <div style="margin-bottom: 5px;">
+                <span style="font-weight: bold;">${song.title}</span><br>
+                <span style="font-size: 0.8em; color: #666;">👤 ${song.artist}</span>
+            </div>
+        `;
                 list.appendChild(li);
             });
         });

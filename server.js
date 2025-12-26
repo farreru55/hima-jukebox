@@ -17,14 +17,21 @@ function getYouTubeID(url) {
     return (match && match[7].length == 11) ? match[7] : false;
 }
 
-// BARU: Fungsi ambil judul dari YouTube tanpa API Key
-async function getYoutubeTitle(videoId) {
+// FUNGSI BARU: Mengembalikan object { title, artist }
+async function getYoutubeMetadata(videoId) {
     try {
         const url = `https://www.youtube.com/oembed?url=http://www.youtube.com/watch?v=${videoId}&format=json`;
         const response = await axios.get(url);
-        return response.data.title;
+        return {
+            title: response.data.title,
+            artist: response.data.author_name // Ini nama channel-nya
+        };
     } catch (error) {
-        return `Lagu ID: ${videoId}`; // Kalau gagal, balik ke ID aja
+        // Fallback kalau gagal fetch
+        return {
+            title: `Lagu ID: ${videoId}`,
+            artist: 'Unknown Channel'
+        };
     }
 }
 
@@ -38,23 +45,24 @@ io.on('connection', (socket) => {
         const videoId = getYouTubeID(url);
         
         if (videoId) {
-            // Cek duplikat
+            // Cek duplikat (Logic sama)
             const exists = playlist.some(s => s.id === videoId) || (currentSong && currentSong.id === videoId);
             
             if (!exists) {
-                // BARU: Ambil judul dulu sebelum push
-                const title = await getYoutubeTitle(videoId);
+                // PANGGIL FUNGSI BARU
+                const metadata = await getYoutubeMetadata(videoId);
 
                 const songData = { 
                     id: videoId, 
-                    title: title, // Simpan judul asli
-                    requester: socket.id // Opsional: catat siapa yg request
+                    title: metadata.title,
+                    artist: metadata.artist, // SIMPAN ARTIST
+                    requester: socket.id 
                 };
                 
                 playlist.push(songData);
                 
                 io.emit('update_queue', { playlist, currentSong });
-                console.log(`Menambahkan: ${title}`);
+                console.log(`Menambahkan: ${metadata.title} by ${metadata.artist}`);
             }
         }
     });
