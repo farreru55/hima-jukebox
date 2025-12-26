@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HOST PLAYER (ADMIN ONLY)</title>
+    <style> body { background: #000; color: #0f0; font-family: monospace; text-align: center; } </style>
+</head>
+<body>
+    <h1>SYSTEM READY. WAITING FOR REQUESTS...</h1>
+    <button onclick="startSystem()" style="padding: 20px; font-size: 20px;">KLIK INI DULU BUAT MULAI</button>
+    <br><br>
+    
+    <div id="player"></div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        let player;
+        let isReady = false;
+
+        // 1. Load IFrame API YouTube
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        // 2. Setup Player
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: '390',
+                width: '640',
+                events: {
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        // 3. Deteksi kalau lagu kelar
+        function onPlayerStateChange(event) {
+            // State 0 artinya ENDED (Selesai)
+            if (event.data === 0) {
+                console.log("Lagu habis, minta server lagu berikutnya...");
+                socket.emit('song_ended'); 
+            }
+        }
+
+        // 4. Fungsi Start (Mengatasi Autoplay Policy)
+        function startSystem() {
+            isReady = true;
+            socket.emit('song_ended'); // Mancing server buat kirim lagu pertama kalau antrian ada
+            alert("System Active. Jangan tutup tab ini.");
+        }
+
+        // 5. Menerima perintah Play dari Server
+        socket.on('play_next', (song) => {
+            if(song && isReady) {
+                console.log("Memutar:", song.id);
+                player.loadVideoById(song.id);
+            }
+        });
+    </script>
+</body>
+</html>

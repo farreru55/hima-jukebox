@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Request Lagu HIMA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style> body { font-family: sans-serif; padding: 20px; } input { width: 70%; padding: 10px; } button { padding: 10px; } </style>
+</head>
+<body>
+    <h2>Request Lagu Sekretariat</h2>
+    <input type="text" id="linkInput" placeholder="Paste Link YouTube di sini...">
+    <button onclick="requestLagu()">Request</button>
+
+    <h3>Sedang Diputar:</h3>
+    <div id="nowPlaying">-</div>
+
+    <h3>Antrian:</h3>
+    <ul id="queueList"></ul>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        function requestLagu() {
+            const input = document.getElementById('linkInput');
+            if(input.value) {
+                socket.emit('request_song', input.value);
+                input.value = ''; // Kosongkan input
+            }
+        }
+
+        // Dengerin update dari server
+        socket.on('update_queue', (data) => {
+            document.getElementById('nowPlaying').innerText = data.currentSong ? data.currentSong.id : "Hening...";
+            
+            const list = document.getElementById('queueList');
+            list.innerHTML = ""; // Reset list
+            data.playlist.forEach(song => {
+                const li = document.createElement('li');
+                li.innerText = song.id;
+                list.appendChild(li);
+            });
+        });
+    </script>
+</body>
+</html>
