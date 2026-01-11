@@ -113,6 +113,14 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on('remove_from_queue', (index) => {
+        if (typeof index === 'number' && index >= 0 && index < playlist.length) {
+            const removed = playlist.splice(index, 1);
+            console.log(`Removed from queue: ${removed[0].title}`);
+            io.emit('update_queue', { playlist, currentSong });
+        }
+    });
+
     socket.on('song_ended', () => {
         if (playlist.length > 0) {
             currentSong = playlist.shift();
