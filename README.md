@@ -14,6 +14,9 @@ Designed for shared spaces (like secretariats, offices, or parties) where one "H
 
 ## 📸 Preview
 
+### Landing Page
+![Landing Page Screenshot](screenshot-landing.png)
+
 ### Client Interface
 ![Client Screenshot](screenshot-client.png)
 
