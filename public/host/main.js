@@ -171,3 +171,33 @@ socket.on("update_queue", ({ playlist }) => {
         )
         .join("");
 });
+
+// Listen for 'update_history' events from the server
+socket.on("update_history", (history) => {
+    const playedHistoryList = document.getElementById("playedHistoryList");
+    if (!history || history.length === 0) {
+        playedHistoryList.innerHTML = `
+            <div class="text-ctp-subtext0 text-[10px] italic p-2 text-center">
+                NO SONGS PLAYED YET
+            </div>
+        `;
+        return;
+    }
+
+    playedHistoryList.innerHTML = history
+        .map(
+            (song, index) => `
+        <div class="bg-ctp-surface0/30 p-2 rounded border border-ctp-surface1/50 flex items-center gap-2">
+            <div class="flex-1 min-w-0 flex flex-col gap-0.5">
+                <div class="text-ctp-peach text-[11px] font-bold truncate leading-tight">
+                    ${song.title}
+                </div>
+                <div class="text-ctp-subtext0 text-[9px] truncate">
+                    ${song.artist || "Unknown Artist"}
+                </div>
+            </div>
+        </div>
+    `,
+        )
+        .join("");
+});

@@ -2,6 +2,7 @@
  * In-memory store for the playlist and current song.
  */
 let playlist = [];
+let playedHistory = [];
 let currentSong = null;
 
 /**
@@ -46,6 +47,14 @@ function removeSong(index) {
  * @returns {Object|null} - The new current song, or null if the playlist is empty.
  */
 function nextSong() {
+    if (currentSong) {
+        playedHistory.unshift(currentSong); // Add to the beginning of history
+        // Keep history to a reasonable size, e.g., 20 songs
+        if (playedHistory.length > 20) {
+            playedHistory.pop();
+        }
+    }
+
     if (playlist.length > 0) {
         currentSong = playlist.shift();
     } else {
@@ -54,9 +63,18 @@ function nextSong() {
     return currentSong;
 }
 
+/**
+ * Returns the list of played songs.
+ * @returns {Array} - The list of played songs.
+ */
+function getPlayedHistory() {
+    return playedHistory;
+}
+
 module.exports = {
     getQueue,
     addSong,
     removeSong,
     nextSong,
+    getPlayedHistory,
 };

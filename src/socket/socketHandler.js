@@ -9,6 +9,7 @@ function initialize(io) {
     io.on('connection', (socket) => {
         console.log('User connected');
         socket.emit('update_queue', playlistManager.getQueue());
+        socket.emit('update_history', playlistManager.getPlayedHistory());
 
         // Listener for song requests
         socket.on('request_song', async (input) => {
@@ -54,11 +55,15 @@ function initialize(io) {
 
         // Listener for when a song ends
         socket.on('song_ended', () => {
-            const newSong = playlistManager.nextSong();
-            if (newSong) {
-                io.emit('play_next', newSong);
+            playlistManager.nextSong(); // Call nextSong first to update history
+            const { playlist, currentSong } = playlistManager.getQueue();
+            if (currentSong) {
+                io.emit('play_next', currentSong);
+            } else {
+                io.emit('play_next', null); // No more songs
             }
-            io.emit('update_queue', playlistManager.getQueue());
+            io.emit('update_queue', { playlist, currentSong });
+            io.emit('update_history', playlistManager.getPlayedHistory());
         });
 
         socket.on('disconnect', () => {
