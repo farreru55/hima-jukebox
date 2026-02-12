@@ -158,99 +158,103 @@
 
                 <!-- Main Player Area -->
                 <div class="flex-1 flex flex-col w-full">
-                    <!-- Player Container -->
-                    <div
-                        class="relative w-full aspect-video bg-ctp-mantle border-2 border-ctp-surface1 rounded-lg overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.5)]"
-                    >
-                        <div id="player" class="w-full h-full"></div>
-
-                        <!-- Overlay Info when idle -->
-                        <div
-                            id="idleState"
-                            class="absolute inset-0 flex items-center justify-center bg-ctp-base/80 z-0 pointer-events-none"
-                        >
-                            <div class="text-center">
-                                <div class="text-4xl animate-bounce mb-2">
-                                    💤
-                                </div>
-                                <div
-                                    class="text-ctp-subtext0 tracking-widest text-sm"
-                                >
-                                    WAITING FOR REQUESTS...
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Controls / Info -->
-                    <div class="w-full mt-6 flex gap-4 items-stretch">
-                        <!-- Status & Metadata Group -->
-                        <div
-                            class="flex-1 bg-ctp-mantle rounded-xl border border-ctp-surface0 p-4 flex items-center justify-between shadow-lg"
-                        >
-                            <div
-                                class="flex flex-col border-r border-ctp-surface1 pr-6 mr-6 min-w-[120px]"
-                            >
-                                <div
-                                    class="text-[10px] text-ctp-overlay0 uppercase tracking-[0.2em] mb-1"
-                                >
-                                    Status
-                                </div>
-                                <div
-                                    id="statusText"
-                                    class="text-ctp-yellow font-bold text-sm"
-                                >
-                                    IDLE
-                                </div>
-                            </div>
-
-                            <div class="flex-1 min-w-0">
-                                <div
-                                    class="text-[10px] text-ctp-overlay0 uppercase tracking-[0.2em] mb-1"
-                                >
-                                    Now Playing
-                                </div>
-                                <div class="flex flex-col">
-                                    <div
-                                        id="currentInfo"
-                                        class="text-ctp-blue font-bold text-sm truncate leading-tight"
-                                    >
-                                        ---
-                                    </div>
-                                    <div
-                                        id="currentArtist"
-                                        class="text-ctp-subtext0 text-[11px] truncate mt-0.5"
-                                    >
-                                        ---
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Sleek Skip Button -->
-                            <button
-                                onclick="skipSong()"
-                                class="ml-6 group relative p-3 rounded-full bg-ctp-surface0 text-ctp-red hover:bg-ctp-red hover:text-ctp-base transition-all duration-300 shadow-lg hover:shadow-[0_0_15px_rgba(243,139,168,0.4)] active:scale-90"
-                                title="Skip Song"
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    class="h-6 w-6"
-                                    viewBox="0 0 24 24"
-                                    fill="currentColor"
-                                >
-                                    <path
-                                        d="M6 18L14.5 12L6 6V18ZM16 6V18H18V6H16Z"
-                                    />
-                                </svg>
-                                <!-- Tooltip hint -->
-                                <span
-                                    class="absolute -top-8 left-1/2 -translate-x-1/2 bg-ctp-surface1 text-ctp-text text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap"
-                                >
-                                    SKIP TRACK
-                                </span>
-                            </button>
-                        </div>
-                    </div>
+                    <!-- Max-width wrapper for player and controls -->
+                    <div class="w-full max-w-3xl mx-auto">
+                                            <!-- Max-width wrapper for player and controls -->
+                                            <div class="w-full max-w-3xl mx-auto">
+                                                <!-- Player Container -->
+                                                <div
+                                                    class="relative w-full aspect-video bg-ctp-mantle border-2 border-ctp-surface1 rounded-lg overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.5)]"
+                                                >
+                                                    <div id="player" class="w-full h-full"></div>
+                        
+                                                    <!-- Overlay Info when idle -->
+                                                    <div
+                                                        id="idleState"
+                                                        class="absolute inset-0 flex items-center justify-center bg-ctp-base/80 z-0 pointer-events-none"
+                                                    >
+                                                        <div class="text-center">
+                                                            <div class="text-4xl animate-bounce mb-2">
+                                                                💤
+                                                            </div>
+                                                            <div
+                                                                class="text-ctp-subtext0 tracking-widest text-sm"
+                                                            >
+                                                                WAITING FOR REQUESTS...
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                        
+                                                <!-- Controls / Info -->
+                                                <div class="w-full mt-6 flex gap-4 items-stretch">
+                                                    <!-- Status & Metadata Group -->
+                                                                            <div
+                                                                                class="flex-1 bg-ctp-mantle rounded-xl border border-ctp-surface0 p-4 grid grid-cols-[auto,1fr,auto] items-center gap-6 shadow-lg"
+                                                                            >
+                                                                                <div
+                                                                                    class="flex flex-col"
+                                                                                >
+                                                                                    <div
+                                                                                        class="text-[10px] text-ctp-overlay0 uppercase tracking-[0.2em] mb-1"
+                                                                                    >
+                                                                                        Status
+                                                                                    </div>
+                                                                                    <div
+                                                                                        id="statusText"
+                                                                                        class="text-ctp-yellow font-bold text-sm"
+                                                                                    >
+                                                                                        IDLE
+                                                                                    </div>
+                                                                                </div>
+                                                    
+                                                                                <div class="overflow-hidden">
+                                                                                    <div
+                                                                                        class="text-[10px] text-ctp-overlay0 uppercase tracking-[0.2em] mb-1"
+                                                                                    >
+                                                                                        Now Playing
+                                                                                    </div>
+                                                                                    <div class="flex flex-col">
+                                                                                        <div
+                                                                                            id="currentInfo"
+                                                                                            class="text-ctp-blue font-bold text-sm truncate leading-tight"
+                                                                                        >
+                                                                                            ---
+                                                                                        </div>
+                                                                                        <div
+                                                                                            id="currentArtist"
+                                                                                            class="text-ctp-subtext0 text-[11px] truncate mt-0.5"
+                                                                                        >
+                                                                                            ---
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                    
+                                                                                <!-- Sleek Skip Button -->
+                                                                                <button
+                                                                                    onclick="skipSong()"
+                                                                                    class="group relative p-3 rounded-full bg-ctp-surface0 text-ctp-red hover:bg-ctp-red hover:text-ctp-base transition-all duration-300 shadow-lg hover:shadow-[0_0_15px_rgba(243,139,168,0.4)] active:scale-90"
+                                                                                    title="Skip Song"
+                                                                                >                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                class="h-6 w-6"
+                                                                viewBox="0 0 24 24"
+                                                                fill="currentColor"
+                                                            >
+                                                                <path
+                                                                    d="M6 18L14.5 12L6 6V18ZM16 6V18H18V6H16Z"
+                                                                />
+                                                            </svg>
+                                                            <!-- Tooltip hint -->
+                                                            <span
+                                                                class="absolute -top-8 left-1/2 -translate-x-1/2 bg-ctp-surface1 text-ctp-text text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap"
+                                                            >
+                                                                SKIP TRACK
+                                                            </span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>                    </div>
                 </div>
             </div>
         </div>
