@@ -54,9 +54,29 @@ function nextSong() {
     return currentSong;
 }
 
+/**
+ * Reorders a song in the playlist.
+ * @param {number} oldIndex - The current index of the song.
+ * @param {number} newIndex - The target index for the song.
+ * @returns {boolean} - True if reordered, false otherwise.
+ */
+function reorderSong(oldIndex, newIndex) {
+    if (
+        oldIndex >= 0 && oldIndex < playlist.length &&
+        newIndex >= 0 && newIndex < playlist.length
+    ) {
+        const [removed] = playlist.splice(oldIndex, 1);
+        playlist.splice(newIndex, 0, removed);
+        console.log(`Reordered song from ${oldIndex} to ${newIndex}: ${removed.title}`);
+        return true;
+    }
+    return false;
+}
+
 module.exports = {
     getQueue,
     addSong,
     removeSong,
     nextSong,
+    reorderSong,
 };

@@ -61,6 +61,13 @@ function initialize(io) {
             io.emit('update_queue', playlistManager.getQueue());
         });
 
+        // Listener to reorder a song in the queue
+        socket.on('reorder_queue', ({ oldIndex, newIndex }) => {
+            if (playlistManager.reorderSong(oldIndex, newIndex)) {
+                io.emit('update_queue', playlistManager.getQueue());
+            }
+        });
+
         socket.on('disconnect', () => {
             console.log('User disconnected');
         });

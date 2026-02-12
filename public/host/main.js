@@ -114,6 +114,26 @@ function removeSong(index) {
     socket.emit("remove_from_queue", index);
 }
 
+/**
+ * Moves a song up in the queue.
+ * @param {number} index - The current index of the song to move.
+ */
+function moveSongUp(index) {
+    if (index > 0) {
+        socket.emit("reorder_queue", { oldIndex: index, newIndex: index - 1 });
+    }
+}
+
+/**
+ * Moves a song down in the queue.
+ * @param {number} index - The current index of the song to move.
+ */
+function moveSongDown(index) {
+    // The server will handle bounds checking based on the actual playlist state.
+    socket.emit("reorder_queue", { oldIndex: index, newIndex: index + 1 });
+}
+
+
 // Listen for 'play_next' events from the server
 socket.on("play_next", (song) => {
     if (song && isReady) {
@@ -145,29 +165,51 @@ socket.on("update_queue", ({ playlist }) => {
     queueList.innerHTML = playlist
         .map(
             (song, index) => `
-        <div class="bg-ctp-surface0/30 p-2 rounded border border-ctp-surface1/50 flex items-center gap-2 group hover:bg-ctp-surface0/60 transition-colors">
-            <div class="flex items-start gap-2 flex-1 min-w-0">
-                <span class="text-ctp-surface2 text-[9px] font-bold mt-0.5">${index + 1}</span>
-                <div class="flex-1 min-w-0 flex flex-col gap-0.5">
-                    <div class="text-ctp-blue text-[11px] font-bold truncate leading-tight group-hover:text-ctp-peach transition-colors">
-                        ${song.title}
+                <div class="bg-ctp-surface0/30 p-2 rounded border border-ctp-surface1/50 flex items-center gap-2 group hover:bg-ctp-surface0/60 transition-colors">
+                    <div class="flex items-start gap-2 flex-1 min-w-0">
+                        <span class="text-ctp-surface2 text-[9px] font-bold mt-0.5">${index + 1}</span>
+                        <div class="flex-1 min-w-0 flex flex-col gap-0.5">
+                            <div class="text-ctp-blue text-[11px] font-bold truncate leading-tight group-hover:text-ctp-peach transition-colors">
+                                ${song.title}
+                            </div>
+                            <div class="text-ctp-subtext0 text-[9px] truncate">
+                                ${song.artist || "Unknown Artist"}
+                            </div>
+                        </div>
                     </div>
-                    <div class="text-ctp-subtext0 text-[9px] truncate">
-                        ${song.artist || "Unknown Artist"}
+                    <div class="flex items-center gap-1">
+                        <button
+                            onclick="moveSongUp(${index})"
+                            class="text-ctp-surface2 hover:text-ctp-mauve transition-colors p-1 rounded hover:bg-ctp-surface1/50 ${index === 0 ? 'opacity-30 cursor-not-allowed' : ''}"
+                            title="Move Up"
+                            ${index === 0 ? 'disabled' : ''}
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 10.828l-4.95 4.95-1.414-1.414L12 8l6.364 6.364-1.414 1.414z"/>
+                            </svg>
+                        </button>
+                        <button
+                            onclick="moveSongDown(${index})"
+                            class="text-ctp-surface2 hover:text-ctp-mauve transition-colors p-1 rounded hover:bg-ctp-surface1/50 ${index === playlist.length - 1 ? 'opacity-30 cursor-not-allowed' : ''}"
+                            title="Move Down"
+                            ${index === playlist.length - 1 ? 'disabled' : ''}
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 13.172l4.95-4.95 1.414 1.414L12 16l-6.364-6.364 1.414-1.414z"/>
+                            </svg>
+                        </button>
+                        <button
+                            onclick="removeSong(${index})"
+                            class="text-ctp-surface2 hover:text-ctp-red transition-colors p-1 rounded hover:bg-ctp-surface1/50"
+                            title="Remove from Queue"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                                <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.49 1.478l-.565 9.064a2.535 2.535 0 01-.658 1.447c-.63.63-1.46.994-2.35.994h-6.63c-.89 0-1.72-.364-2.35-.994a2.535 2.535 0 01-.658-1.447l-.565-9.064a48.892 48.892 0 01-3.388-.42.75.75 0 01.49-1.478 47.36 47.36 0 013.878-.512v-.227c0-1.106.848-2.026 1.94-2.137.668-.069 1.343-.105 2.02-.105a46.604 46.604 0 012.02.105c1.092.111 1.94 1.031 1.94 2.137z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
                     </div>
                 </div>
-            </div>
-            <button 
-                onclick="removeSong(${index})" 
-                class="text-ctp-surface2 hover:text-ctp-red transition-colors p-1 rounded hover:bg-ctp-surface1/50" 
-                title="Remove from Queue"
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-                    <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.49 1.478l-.565 9.064a2.535 2.535 0 01-.658 1.447c-.63.63-1.46.994-2.35.994h-6.63c-.89 0-1.72-.364-2.35-.994a2.535 2.535 0 01-.658-1.447l-.565-9.064a48.892 48.892 0 01-3.388-.42.75.75 0 01.49-1.478 47.36 47.36 0 013.878-.512v-.227c0-1.106.848-2.026 1.94-2.137.668-.069 1.343-.105 2.02-.105a46.604 46.604 0 012.02.105c1.092.111 1.94 1.031 1.94 2.137z" clip-rule="evenodd" />
-                </svg>
-            </button>
-        </div>
-    `,
-        )
-        .join("");
-});
+            `,
+                )
+                .join("");
+        });
